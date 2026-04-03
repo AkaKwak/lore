@@ -1,73 +1,73 @@
 # ENS Reputation Passport
 
-Projet hackathon bootstrapé pour le prize **Most Creative Use of ENS**.
+Hackathon bootstrap project for the **Most Creative Use of ENS** prize.
 
 ## Pitch
 
-**ENS Reputation Passport** transforme un nom ENS en identité programmable et lisible, enrichie par des attestations vérifiables provenant d'Intuition.
+**ENS Reputation Passport** turns an ENS name into a programmable, human-readable identity enriched with verifiable attestations from Intuition.
 
-- **ENS** = couche d'identité, de résolution, de portabilité et de découverte
-- **Intuition** = couche de graphe de connaissance, de claims structurés et de signaux de confiance
-- **App** = un passeport web3 consultable, attestable, partageable et demo-friendly
+- **ENS** = identity, resolution, portability, and discovery layer
+- **Intuition** = knowledge graph layer with structured claims and trust signals
+- **App** = a web3 passport that is viewable, attestable, shareable, and demo-friendly
 
-L'utilisateur saisit `alice.eth`, l'application :
+The user enters `alice.eth`; the application:
 
-1. résout le nom ENS ;
-2. lit l'avatar et les text records utiles ;
-3. récupère les attestations et relations Intuition ;
-4. calcule des badges / catégories / score synthétique ;
-5. permet à un wallet connecté d'ajouter une attestation.
-
----
-
-## Pourquoi ce projet a du sens pour le prize ENS
-
-Le brief ENS veut des usages où ENS n'est **pas juste un lookup name → address**.
-
-Ici, ENS est central :
-
-- identité primaire utilisateur (`nom.eth` au lieu d'une adresse hex) ;
-- couche publique de découverte via les **text records** ;
-- compatibilité avec les wallets et les applications ;
-- support naturel d'un profil lisible par des humains et exploitable de façon programmatique.
-
-Intuition renforce ENS avec des **claims vérifiables** :
-
-- Atoms = entités
-- Triples = relations / assertions structurées
-- Signals = poids / conviction / réputation
+1. resolves the ENS name;
+2. reads the avatar and useful text records;
+3. fetches Intuition attestations and relations;
+4. derives badges / categories / a concise score;
+5. lets a connected wallet add an attestation.
 
 ---
 
-## MVP cible
+## Why this fits the ENS prize
 
-### Écran 1 — Search
-- champ ENS
+The ENS brief calls for use cases where ENS is **not just a name → address lookup**.
+
+Here, ENS is central:
+
+- primary user identity (`name.eth` instead of a hex address);
+- public discovery via **text records**;
+- compatibility with wallets and applications;
+- a profile that is human-readable and programmatically usable.
+
+Intuition strengthens ENS with **verifiable claims**:
+
+- Atoms = entities
+- Triples = relations / structured assertions
+- Signals = weight / conviction / reputation
+
+---
+
+## Target MVP
+
+### Screen 1 — Search
+- ENS input field
 - CTA `Load Passport`
 
-### Écran 2 — Passport
-- nom ENS
-- adresse résolue
-- avatar ENS
-- text records clés
-- attestations Intuition
-- score résumé
+### Screen 2 — Passport
+- ENS name
+- resolved address
+- ENS avatar
+- key text records
+- Intuition attestations
+- summary score
 - badges
 
-### Écran 3 — Attest
+### Screen 3 — Attest
 - subject
 - predicate
 - object
-- bouton de création d'attestation
+- create-attestation action
 
-### Écran 4 — Proof / Demo
-- hash de transaction
-- lien vers Intuition Portal
-- lien vers ENS Manager / resolver state si utile
+### Screen 4 — Proof / Demo
+- transaction hash
+- link to Intuition Portal
+- link to ENS Manager / resolver state if useful
 
 ---
 
-## Stack recommandée
+## Recommended stack
 
 - **Next.js 14+**
 - **TypeScript**
@@ -75,12 +75,12 @@ Intuition renforce ENS avec des **claims vérifiables** :
 - **viem**
 - **wagmi**
 - **@0xintuition/sdk**
-- **GraphQL** pour les lectures Intuition si plus rapide à ship que l'intégration write-first
-- **Vercel** pour le déploiement rapide
+- **GraphQL** for Intuition reads if faster to ship than a write-first integration
+- **Vercel** for quick deployment
 
 ---
 
-## Arborescence recommandée
+## Recommended layout
 
 ```txt
 .
@@ -115,13 +115,13 @@ Intuition renforce ENS avec des **claims vérifiables** :
 
 ---
 
-## Décisions produit importantes
+## Key product decisions
 
-### 1. ENS est l'entrée canonique
-Tout part d'un nom ENS. Évite une UX centrée d'abord sur l'adresse.
+### 1. ENS is the canonical entry
+Everything starts from an ENS name. Avoid UX that centers the raw address first.
 
-### 2. ENS text records = couche légère et interopérable
-Utiliser les text records pour des métadonnées **simples et publiques** :
+### 2. ENS text records = light, interoperable layer
+Use text records for **simple, public** metadata:
 
 - `description`
 - `url`
@@ -132,61 +132,62 @@ Utiliser les text records pour des métadonnées **simples et publiques** :
 - `org.intuition.subject`
 - `org.project.version`
 
-### 3. Intuition = source de vérité réputationnelle
-Ne pas tenter de tout écrire dans ENS. ENS pointe, Intuition structure.
+### 3. Intuition = source of reputation truth
+Do not try to write everything into ENS. ENS points; Intuition structures.
 
-### 4. Lecture rapide, écriture ciblée
-Pour le hackathon :
-- lecture ENS fiable et immédiate ;
-- lecture Intuition riche ;
-- écriture Intuition sur un flow unique d'attestation.
+### 4. Fast reads, focused writes
+For the hackathon:
+
+- reliable, immediate ENS reads;
+- rich Intuition reads;
+- Intuition writes on a single attestation flow.
 
 ---
 
-## Plan de build en 6 étapes
+## Six-step build plan
 
-### Étape 1 — Base app
+### Step 1 — App shell
 - init Next.js + TypeScript + Tailwind
-- brancher wagmi / viem
-- page home simple
+- wire wagmi / viem
+- simple home page
 
-### Étape 2 — ENS read path
+### Step 2 — ENS read path
 - resolve ENS
 - fetch address
 - fetch avatar
 - fetch text records
-- afficher erreurs propres
+- clear error states
 
-### Étape 3 — Intuition read path
-- récupérer claims / triples liés à l'identité
-- mapper en badges lisibles
-- définir un score simple et transparent
+### Step 3 — Intuition read path
+- fetch claims / triples tied to identity
+- map to readable badges
+- define a simple, transparent score
 
-### Étape 4 — Passport UI
-- carte identité
-- bloc records
-- bloc attestations
-- bloc score
+### Step 4 — Passport UI
+- identity card
+- records block
+- attestations block
+- score block
 
-### Étape 5 — Attestation flow
-- wallet connecté
-- formulaire S-P-O
-- create atom / triple si nécessaire
-- afficher résultat
+### Step 5 — Attestation flow
+- connected wallet
+- S-P-O form
+- create atom / triple when needed
+- show result
 
-### Étape 6 — Demo polish
-- ENS d'exemple réels
-- seed data lisible
-- vidéo de démo
-- page judges / booth flow en 30 secondes
+### Step 6 — Demo polish
+- real example ENS names
+- readable seed data
+- demo video
+- judges / booth flow page under ~30 seconds
 
 ---
 
-## Heuristique de score recommandée
+## Recommended score heuristic
 
-Le score ne doit pas être “magique”. Il doit être explicable.
+The score should not feel like a black box. It should be explainable.
 
-Exemple de formule MVP :
+Example MVP formula:
 
 ```txt
 reputationScore =
@@ -196,7 +197,8 @@ reputationScore =
 + positiveSignalsWeight
 ```
 
-Exemple d'affichage :
+Example labels:
+
 - `Trusted Builder`
 - `Frontend Contributor`
 - `Hackathon Shipper`
@@ -204,7 +206,7 @@ Exemple d'affichage :
 
 ---
 
-## Sources et docs à garder ouvertes pendant le build
+## References to keep handy while building
 
 ### ENS
 - Docs: https://docs.ens.domains/
@@ -223,9 +225,9 @@ Exemple d'affichage :
 
 ---
 
-## Variables d'environnement suggérées
+## Suggested environment variables
 
-Créer un `.env.local` basé sur `.env.example`.
+Create `.env.local` from `.env.example`.
 
 ```bash
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=
@@ -236,18 +238,18 @@ NEXT_PUBLIC_INTUITION_EXPLORER_URL=
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-> Garde les variables de lecture en `NEXT_PUBLIC_` uniquement si elles sont vraiment publiques.
+> Only use `NEXT_PUBLIC_` for values that are truly safe to expose in the browser.
 
 ---
 
-## Commandes démarrage rapide
+## Quick start commands
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Build de prod :
+Production build:
 
 ```bash
 pnpm build
@@ -256,48 +258,46 @@ pnpm start
 
 ---
 
-## Démo hackathon idéale
+## Ideal hackathon demo script
 
-Script de démo :
-
-1. saisir `alice.eth`
-2. voir l'adresse, l'avatar, les records ENS
-3. afficher les claims Intuition
-4. expliquer le score
-5. créer une nouvelle attestation en live
-6. recharger et montrer qu'aucune donnée n'est hardcodée
+1. Enter `alice.eth`
+2. Show address, avatar, ENS records
+3. Show Intuition claims
+4. Explain the score
+5. Create a new attestation live
+6. Refresh and show that nothing critical is hardcoded
 
 ---
 
-## Extensions bonus si temps restant
+## Bonus extensions if time allows
 
-### A. Subnames comme access tokens
+### A. Subnames as access tokens
 - `alice.builder.project.eth`
-- rôle et accès portés par ENS + attestés via Intuition
+- role and access carried by ENS + attested via Intuition
 
 ### B. Privacy mode
-- records ENS minimaux + preuves riches dans Intuition
-- segmentation public / attesté / privé
+- minimal ENS records + richer proofs in Intuition
+- segmentation public / attested / private
 
-### C. Expérience contextuelle
-- un client ou service tiers peut s'appuyer sur ENS, les records et la réputation pour personnaliser l'expérience
-
----
-
-## Définition du succès
-
-Le projet est prêt quand :
-
-- ENS est indispensable à l'UX ;
-- l'app résout de vrais noms ;
-- les records ENS sont réellement lus ;
-- les données Intuition sont réellement requêtées ;
-- au moins un flow d'attestation est live ;
-- la démo passe en moins de 60 secondes ;
-- rien de critique n'est hardcodé.
+### C. Contextual experience
+- a third-party client or service can use ENS, records, and reputation to tailor the experience
 
 ---
 
-## Licence / usage
+## Definition of done
 
-Usage libre pour bootstrap de hackathon et démarrage rapide.
+The project is ready when:
+
+- ENS is essential to the UX;
+- the app resolves real names;
+- ENS records are actually read;
+- Intuition data is actually queried;
+- at least one attestation flow is live;
+- the demo fits in under 60 seconds;
+- nothing critical is hardcoded.
+
+---
+
+## License / usage
+
+Free to use for hackathon bootstrapping and fast iteration.
