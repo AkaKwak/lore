@@ -28,8 +28,8 @@ Ici, ENS est central :
 
 - identité primaire utilisateur (`nom.eth` au lieu d'une adresse hex) ;
 - couche publique de découverte via les **text records** ;
-- compatibilité avec les wallets, apps et agents ;
-- support naturel d'un profil lisible par des humains et par l'IA.
+- compatibilité avec les wallets et les applications ;
+- support naturel d'un profil lisible par des humains et exploitable de façon programmatique.
 
 Intuition renforce ENS avec des **claims vérifiables** :
 
@@ -109,11 +109,8 @@ Intuition renforce ENS avec des **claims vérifiables** :
 │  │  └─ reputation.ts
 │  └─ utils/
 ├─ public/
-├─ .cursor/
-│  └─ rules/
 ├─ .env.example
-├─ README.md
-└─ CURSOR_SETUP.md
+└─ README.md
 ```
 
 ---
@@ -211,7 +208,6 @@ Exemple d'affichage :
 
 ### ENS
 - Docs: https://docs.ens.domains/
-- Building with AI: https://docs.ens.domains/building-with-ai/
 - Resolution: https://docs.ens.domains/resolution/
 - Universal Resolver: https://docs.ens.domains/resolvers/universal/
 - Text Records / ENSIP-5: https://docs.ens.domains/ens-improvement-proposals/ensip-5-text-records
@@ -224,16 +220,6 @@ Exemple d'affichage :
 - Tutorials Overview: https://docs.intuition.systems/docs/tutorials/overview
 - Create Triple: https://docs.intuition.systems/docs/interaction-guide/create-triple
 - Portal: https://portal.intuition.systems
-- llms.txt: https://docs.intuition.systems/llms.txt
-- llms-full.txt: https://docs.intuition.systems/llms-full.txt
-- llms-medium.txt: https://docs.intuition.systems/llms-medium.txt
-
-### Cursor
-- Docs: https://cursor.com/docs
-- Rules: https://cursor.com/docs/rules
-- Skills: https://cursor.com/docs/skills
-- Hooks: https://cursor.com/docs/hooks
-- Quickstart: https://cursor.com/docs/get-started/quickstart
 
 ---
 
@@ -293,8 +279,8 @@ Script de démo :
 - records ENS minimaux + preuves riches dans Intuition
 - segmentation public / attesté / privé
 
-### C. AI mode
-- un agent lit ENS + records + réputation pour adapter le contexte
+### C. Expérience contextuelle
+- un client ou service tiers peut s'appuyer sur ENS, les records et la réputation pour personnaliser l'expérience
 
 ---
 

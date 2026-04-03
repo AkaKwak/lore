@@ -47,7 +47,7 @@ yarn-error.log*
 .turbo
 .eslintcache
 
-# Cursor — rules, plans, local project AI config
+# Local editor / tooling (optional)
 .cursor/
 
 # IDE / editor
@@ -59,6 +59,6 @@ yarn-error.log*
 .fleet/
 *.code-workspace
 
-# Local docs and bootstrap notes (README.md stays tracked)
+# Local notes and bootstrap drafts (README.md stays tracked)
 /CURSOR_SETUP.md
 /ENS-Intuition-Cursor-Bootstrap.md
