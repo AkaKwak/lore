@@ -2,13 +2,14 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import gsap from "gsap";
-import { useAccount } from "wagmi";
-import { CORE_STAMPS, submitStamp, deriveVibe } from "@/lib/stamps";
+import { useAccount, useWalletClient, usePublicClient } from "wagmi";
+import { CORE_STAMPS, submitStamp } from "@/lib/stamps";
 import type { LoreProfile } from "@/lib/intuition";
+import { INTUITION_CHAIN } from "@/lib/intuition/contract";
 import { EnsName } from "@/components/ens/EnsName";
 import { type Address, isAddress } from "viem";
 
-const STAMP_COLORS: Record<string, { bg: string; bar: string; text: string }> =
+export const STAMP_COLORS: Record<string, { bg: string; bar: string; text: string }> =
   {
     Builder: {
       bg: "bg-emerald-50 dark:bg-emerald-950/30",
@@ -76,10 +77,14 @@ export function StampPanel({
   ensName: string;
 }) {
   const { isConnected, address } = useAccount();
+  const { data: walletClient } = useWalletClient({ chainId: INTUITION_CHAIN.id });
+  const publicClient = usePublicClient({ chainId: INTUITION_CHAIN.id });
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   const [optimistic, setOptimistic] = useState<Record<string, number>>({});
+  const [busy, setBusy] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error";
@@ -116,20 +121,20 @@ export function StampPanel({
 
   const handleStamp = useCallback(
     async (label: string) => {
-      if (!mounted) return;
+      if (!mounted || busy) return;
 
       if (!isConnected || !address) {
         showToast("Connect your wallet first", "error");
         return;
       }
 
-      // Optimistic update
+      setBusy(label);
+
       setOptimistic((prev) => ({
         ...prev,
         [label]: (prev[label] ?? 0) + 1,
       }));
 
-      // GSAP bounce on button
       const btn = buttonRefs.current[label];
       if (btn) {
         gsap.fromTo(
@@ -139,7 +144,6 @@ export function StampPanel({
         );
       }
 
-      // GSAP counter slide
       const countEl = countRefs.current[label];
       if (countEl) {
         gsap.fromTo(
@@ -149,7 +153,6 @@ export function StampPanel({
         );
       }
 
-      // GSAP bar growth
       const barEl = barRefs.current[label];
       if (barEl) {
         const newCount = getCount(label) + 1;
@@ -162,7 +165,15 @@ export function StampPanel({
         });
       }
 
-      const result = await submitStamp(ensName, label, address);
+      const result = await submitStamp(
+        ensName,
+        label,
+        address,
+        walletClient ?? undefined,
+        publicClient ?? undefined,
+      );
+
+      setBusy(null);
 
       if (!result.ok) {
         setOptimistic((prev) => ({
@@ -171,32 +182,34 @@ export function StampPanel({
         }));
         showToast(result.error, "error");
       } else {
-        showToast(`Added to the graph!`, "success");
+        const msg = result.txHash
+          ? "Stamped onchain!"
+          : "Added to the graph!";
+        showToast(msg, "success");
       }
     },
-    [mounted, isConnected, address, ensName, showToast, maxCount, getCount],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mounted, busy, isConnected, address, ensName, walletClient, publicClient, showToast],
   );
-
-  const vibe = deriveVibe(profile.topTraits);
 
   return (
     <div className="space-y-3">
-      {/* Stamp grid — each button IS the graph visualization */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {CORE_STAMPS.map((label) => {
           const count = getCount(label);
           const colors = STAMP_COLORS[label] ?? DEFAULT_COLOR;
           const pct = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0;
+          const isBusy = busy === label;
 
           return (
             <button
               key={label}
               ref={(el) => { buttonRefs.current[label] = el; }}
               type="button"
+              disabled={isBusy}
               onClick={() => handleStamp(label)}
-              className={`relative flex items-center gap-2 overflow-hidden rounded-xl border-2 border-transparent px-3 py-3 text-left transition-all hover:border-zinc-300 active:scale-95 dark:hover:border-zinc-600 ${colors.bg}`}
+              className={`relative flex items-center gap-2 overflow-hidden rounded-xl border-2 border-transparent px-3 py-3 text-left transition-all hover:border-zinc-300 active:scale-95 dark:hover:border-zinc-600 ${colors.bg} ${isBusy ? "opacity-60 pointer-events-none" : ""}`}
             >
-              {/* Background bar showing graph weight */}
               <div
                 ref={(el) => { barRefs.current[label] = el; }}
                 className={`absolute inset-y-0 left-0 opacity-20 ${colors.bar}`}
@@ -211,21 +224,19 @@ export function StampPanel({
                 ref={(el) => { countRefs.current[label] = el; }}
                 className="relative z-10 tabular-nums text-xs font-medium text-zinc-500 dark:text-zinc-400"
               >
-                {count}
+                {isBusy ? "…" : count}
               </span>
             </button>
           );
         })}
       </div>
 
-      {/* Wallet prompt */}
       {mounted && !isConnected ? (
         <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
           Connect your wallet to stamp
         </p>
       ) : null}
 
-      {/* Graph activity feed */}
       {profile.recent.length > 0 ? (
         <div className="space-y-1 border-t border-zinc-100 pt-2 dark:border-zinc-800">
           <h4 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
@@ -259,7 +270,6 @@ export function StampPanel({
         </div>
       ) : null}
 
-      {/* Toast */}
       {toast ? (
         <div
           ref={toastRef}
