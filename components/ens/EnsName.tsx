@@ -4,16 +4,14 @@ import { useEnsName } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { type Address } from "viem";
 
-function truncateAddress(address: string) {
-  return `${address.slice(0, 6)}…${address.slice(-4)}`;
-}
-
 export function EnsName({
   address,
   className,
+  fallback = "anon",
 }: {
   address: Address;
   className?: string;
+  fallback?: string;
 }) {
   const { data: ensName } = useEnsName({
     address,
@@ -21,8 +19,8 @@ export function EnsName({
   });
 
   return (
-    <span className={className} title={address}>
-      {ensName ?? truncateAddress(address)}
+    <span className={className} title={ensName ?? fallback}>
+      {ensName ?? fallback}
     </span>
   );
 }
