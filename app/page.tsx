@@ -1,31 +1,54 @@
-import { HeroIntro } from "@/components/motion/HeroIntro";
-import Link from "next/link";
+import { Suspense } from "react";
+import { EnsSearch } from "@/components/lore/EnsSearch";
+import { ConnectButton } from "@/components/wallet/ConnectButton";
+import { RandomEnsButton } from "@/components/lore/RandomEnsButton";
+import { LoreProfileSection } from "./lore-section";
 
-export default function Home() {
+const DEFAULT_ENS = "vitalik.eth";
+
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function Home({ searchParams }: Props) {
+  const params = await searchParams;
+  const ensQuery =
+    typeof params.ens === "string" ? params.ens.trim() : undefined;
+  const ensToLoad = ensQuery || DEFAULT_ENS;
+
   return (
     <div className="flex min-h-full flex-col">
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-6 py-24">
-        <HeroIntro />
-        <section className="flex flex-col gap-4 text-sm text-zinc-600 dark:text-zinc-400">
-          <h2 className="text-base font-medium text-foreground">MVP flow</h2>
-          <ol className="list-decimal space-y-2 pl-5">
-            <li>Search — enter an ENS name and load the passport</li>
-            <li>Passport — address, avatar, text records, Intuition claims</li>
-            <li>Attest — create a structured attestation</li>
-            <li>Proof — transaction hash and explorer links</li>
-          </ol>
-        </section>
-        <nav className="flex flex-wrap gap-4 text-sm font-medium">
-          <Link className="underline underline-offset-4" href="/attest">
-            Attest (stub)
-          </Link>
-          <Link
-            className="underline underline-offset-4"
-            href="/passport/example.eth"
-          >
-            Passport URL shape
-          </Link>
-        </nav>
+      <header className="mx-auto flex w-full max-w-2xl flex-wrap items-center gap-2 px-4 pt-4 sm:px-6">
+        <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+          lore
+        </span>
+        <div className="flex flex-1 items-center justify-center gap-1.5">
+          <Suspense fallback={null}>
+            <EnsSearch />
+          </Suspense>
+          <RandomEnsButton />
+        </div>
+        <ConnectButton />
+      </header>
+
+      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-4 py-4 sm:px-6">
+        <Suspense
+          fallback={
+            <div className="animate-pulse space-y-3">
+              <div className="h-14 rounded-xl bg-zinc-100 dark:bg-zinc-800" />
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800"
+                  />
+                ))}
+              </div>
+            </div>
+          }
+        >
+          <LoreProfileSection ensName={ensToLoad} />
+        </Suspense>
       </main>
     </div>
   );

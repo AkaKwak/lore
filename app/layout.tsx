@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Web3Providers } from "@/lib/wallet/providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ENS Reputation Passport",
+  title: "Lore — stamp any ENS",
   description:
-    "ENS as identity entrypoint with Intuition attestations and reputation signals.",
+    "Stamp ENS identities and build a playful onchain social graph with Intuition.",
 };
 
 export default function RootLayout({
@@ -28,7 +29,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Web3Providers>{children}</Web3Providers>
+      </body>
     </html>
   );
 }
