@@ -1,31 +1,34 @@
 import { isValidStamp } from "./registry";
+import { createStamp } from "@/lib/intuition/write-stamp";
+import type { PublicClient, WalletClient } from "viem";
 
 export type StampResult =
-  | { ok: true }
+  | { ok: true; txHash?: string }
   | { ok: false; error: string };
 
-/**
- * Submit a stamp. Currently faked with a short delay.
- * Swap the body to fetch('/api/stamp') for real relayer.
- */
+function isMockMode(): boolean {
+  return process.env.NEXT_PUBLIC_MOCK_STAMPS === "true";
+}
+
 export async function submitStamp(
   ensName: string,
   label: string,
-  actor: string,
+  _actor: string,
+  walletClient?: WalletClient,
+  publicClient?: PublicClient,
 ): Promise<StampResult> {
   if (!isValidStamp(label)) {
     return { ok: false, error: `Invalid stamp: ${label}` };
   }
 
-  // PHASE 1: simulated delay
-  await new Promise((r) => setTimeout(r, 400 + Math.random() * 200));
-  return { ok: true };
+  if (isMockMode()) {
+    await new Promise((r) => setTimeout(r, 400 + Math.random() * 200));
+    return { ok: true };
+  }
 
-  // PHASE 2: swap to real relayer
-  // const res = await fetch("/api/stamp", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ ensName, label, actor }),
-  // });
-  // return res.json();
+  if (!walletClient || !publicClient) {
+    return { ok: false, error: "Wallet not available for onchain stamp" };
+  }
+
+  return createStamp(walletClient, publicClient, ensName, label);
 }
