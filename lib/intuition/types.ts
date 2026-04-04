@@ -1,17 +1,25 @@
-export type PassportClaim = {
-  id: string;
-  subject: string;
-  predicate: string;
-  object: string;
-  confidence?: number;
-  source?: string;
+export type StampRecord = {
+  label: string;
   createdAt?: string;
+  transactionHash?: string;
+  actor?: string;
 };
 
-/**
- * Read-side adapter — implement when Intuition SDK or GraphQL contract is wired.
- * Do not couple UI components to raw protocol responses; map into PassportClaim[].
- */
-export interface IntuitionReadAdapter {
-  listClaimsForEns(normalizedName: string): Promise<PassportClaim[]>;
-}
+export type LoreProfile = {
+  ensName: string;
+  total: number;
+  counts: Record<string, number>;
+  topTraits: string[];
+  recent: StampRecord[];
+};
+
+export type IntuitionFetchErrorCode = "GRAPHQL_ERROR" | "NETWORK_ERROR";
+
+export type IntuitionFetchError = {
+  code: IntuitionFetchErrorCode;
+  message: string;
+};
+
+export type LoreProfileResult =
+  | { ok: true; profile: LoreProfile }
+  | { ok: false; error: IntuitionFetchError };
