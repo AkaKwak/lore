@@ -1,27 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
-const NOTABLE_ENS = [
-  "vitalik.eth",
-  "nick.eth",
-  "brantly.eth",
-  "griff.eth",
-  "lefteris.eth",
-  "sassal.eth",
-  "superphiz.eth",
-  "poap.eth",
-  "punk6529.eth",
-  "0xdesigner.eth",
-  "coltron.eth",
-  "fireyes.eth",
-];
+import { NOTABLE_ENS, pickRandom } from "@/lib/ens/notable";
 
 export function RandomEnsButton() {
   const router = useRouter();
 
   function handleClick() {
-    const name = NOTABLE_ENS[Math.floor(Math.random() * NOTABLE_ENS.length)];
+    const name = pickRandom(NOTABLE_ENS);
     router.push(`/?ens=${encodeURIComponent(name)}`);
   }
 
