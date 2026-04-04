@@ -47,7 +47,7 @@ yarn-error.log*
 .turbo
 .eslintcache
 
-# Local editor / tooling (optional)
+# Cursor — rules, plans, local project AI config
 .cursor/
 
 # IDE / editor
@@ -59,6 +59,18 @@ yarn-error.log*
 .fleet/
 *.code-workspace
 
-# Local notes and bootstrap drafts (README.md stays tracked)
+# Local docs and bootstrap notes (README.md stays tracked)
 /CURSOR_SETUP.md
 /ENS-Intuition-Cursor-Bootstrap.md
+
+# AI-generated project docs
+/CURSOR_EXECUTION_PLAN.md
+/PROJECT_BRIEF_V2.md
+/MVP_SCOPE_V2.md
+/DATA_MODEL_INTUITION.md
+
+# Design files
+/docs/
+
+# npm lockfile (project uses pnpm)
+package-lock.json
